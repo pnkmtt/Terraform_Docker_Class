@@ -7,11 +7,14 @@ Vagrant is designed to automatically & repeatedly provision development environm
 
 VirtualBox is an Oracle product that allows you to run virtual guests on your machine for development.  Vagrant understands how to call VirtualBox to create an instance on a private network [NAT](https://computer.howstuffworks.com/nat.htm) on your machine so you can easily do development work.
 
+Docker is a container technology that enables users to deploy microservices in their enviroments.  In this class we will use Docker as the enviroment that we target with Terraform.
+
+Terraform is a utility that enables the creation of infrastructure within several differnt providers.  In this class we will use Terraform to create docker containers.
+
 
 ## Installing the Windows development Environment
 
-To install our environment we should follow the below sections in order:
-
+To install our windows working environment we should follow the below sections in order:
 
 1. Installing Vagrant
 1. Installing Git
@@ -186,26 +189,13 @@ logout
 Connection to localhost closed.
 ```
 
-## Accessing our Ansible Files
+# Machine notes
 
-The VM has mounted your working directory as a partition it can access.  This can be found under /vagrant.  Run `cd /vagrant` to enter this directory.
+## Terraform host
 
-In this directory you will find several files that allow Ansible to configure a host with Apache (a web server), MariaDB (a MySQL database fork), and populates configuration files to allow Apache to store and access data within the database.
+As of this writing I am installing terraform 0.11.3 from the link below.  This is the latest release at this time.
 
-* `hosts` - lists all Ansible hosts and configuration parameters such as ssh keys
-playbook.yml - base Ansible playbook that details what roles to install on specific hosts, in our case the list is 'all'
-* `roles` - directory that holds application definitions
-* `roles\apache2` - top level of the apache2 role
-* `roles\apache2\tasks` - contains yml files that tell Ansible what action to take
-* `roles\apache\files` - contains files that can be copied to the remote hosts
-* `roles\mariadb\tasks` - contains yml files that tell Ansible what action to take
-* `roles\mariadb\files` - contains files that can be copied to the remote hosts
-
-To have Ansible install Apache and MariaDB, run this command `ansible-playbook -i hosts playbook.yml --sudo`. You will have to accept the ssh key on first access.
-
-Pay attention to the output and you will see each step being taken to configure the applications, insert data, and allow Apache to access MariaDB.
-
-Once the playbook is complete, in your local browser type in the URL `http://localhost:8080/db.php`.  The response comes from the backend MariaDB.
+https://releases.hashicorp.com/terraform/0.11.3/
 
 # Clean up your Vagrant install
 
@@ -219,3 +209,17 @@ C:\Users\panik\Dropbox\git\Vagrant_Ansible_Class>vagrant destroy
 ==> default: Forcing shutdown of VM...
 ==> default: Destroying VM and associated drives...
 ```
+
+
+## Terraform host
+
+```
+sudo apt update
+sudo apt install unzip -y
+unzip /vagrant/terraform_0.11.3_linux_amd64.zip -d /var/tmp/
+sudo cp /var/tmp/terraform /usr/sbin/terraform
+sudo chmod 755 /usr/sbin/terraform
+terraform -v
+Terraform v0.11.3
+```
+

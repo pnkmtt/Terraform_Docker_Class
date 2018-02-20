@@ -11,7 +11,7 @@ domain   = 'example.com'
 nodes = [
   { :hostname => 'terraform',   :ip => '192.168.0.42', :box => 'v0rtex/xenial64-iso', :guest => '22', :host => '5555'},
   { :hostname => 'docker',   :ip => '192.168.0.43', :box => 'v0rtex/xenial64-iso', :guest => '22', :host => '5556'},
-
+]
 
 Vagrant.configure("2") do |config|
   nodes.each do |node|
@@ -19,16 +19,26 @@ Vagrant.configure("2") do |config|
       nodeconfig.vm.box = node[:box]
       nodeconfig.vm.hostname = node[:hostname] + ".box"
       nodeconfig.vm.network :private_network, ip: node[:ip]
-      nodeconfig.vm.boot_timeout = 400
+      nodeconfig.vm.boot_timeout = 300
       nodeconfig.vm.network "forwarded_port", guest: node[:guest], host: node[:host]
       memory = node[:ram] ? node[:ram] : 500;
-
-nodeconfig.vm.provider :virtualbox do |vb|
+      nodeconfig.vm.provider :virtualbox do |vb|
         vb.linked_clone = true
         vb.customize [
           "modifyvm", :id,
           "--cpuexecutioncap", "30",
           "--memory", memory.to_s,
         ]
+      end
+      ## Run scripts that match pre-<nameofthebox>.sh  
+      if File.exists?(File.expand_path(File.join(File.dirname(__FILE__), "./scripts/pre-#{node[:hostname]}.sh")))
+        nodeconfig.vm.provision :shell do |shell|
+          shell.path = File.expand_path(File.join(File.dirname(__FILE__), "./scripts/pre-#{node[:hostname]}.sh"))
+          #shell.args = "#{environment} #{sourcedir}"
+        end
+      end
+    end
   end
 end
+
+
