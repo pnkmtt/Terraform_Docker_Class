@@ -31,10 +31,11 @@ Vagrant.configure("2") do |config|
         ]
       end
       ## Run scripts that match pre-<nameofthebox>.sh  
-      if File.exists?(File.expand_path(File.join(File.dirname(__FILE__), "./scripts/pre-#{node[:hostname]}.sh")))
-        nodeconfig.vm.provision :shell do |shell|
-          shell.path = File.expand_path(File.join(File.dirname(__FILE__), "./scripts/pre-#{node[:hostname]}.sh"))
-          #shell.args = "#{environment} #{sourcedir}"
+      ## removed this in favor of ansible
+#      if File.exists?(File.expand_path(File.join(File.dirname(__FILE__), "./scripts/pre-#{node[:hostname]}.sh")))
+#        nodeconfig.vm.provision :shell do |shell|
+#          shell.path = File.expand_path(File.join(File.dirname(__FILE__), "./scripts/pre-#{node[:hostname]}.sh"))
+#          #shell.args = "#{environment} #{sourcedir}"
         end
       end
     end

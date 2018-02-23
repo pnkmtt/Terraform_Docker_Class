@@ -1,0 +1,30 @@
+---
+- name: Update apt
+  apt: update_cache: yes
+
+- name: Install software-properties-common tools
+  apt: name=software-properties-common state=present
+
+- name: Install ca-certificates apt tools
+  apt: name=ca-certificates state=present
+
+- name: copy docker gpg key from file store
+  copy: src=docker.gpg dest=/var/tmp/docker.gpg
+
+- name: add docker key to apt
+  apt_key: id: f273FCD8 file: /var/tmp/docker.gpg state:present
+
+- name: add docker repositiory
+  apt_repository: repo: deb arch=amd64 https://download.docker.com/linux/ubuntu xenial stable
+
+- name: Update apt 2nd
+  apt: update_cache: yes
+
+- name: install docker-ce
+  apt: name=docker-ce state=present
+
+
+
+
+
+
