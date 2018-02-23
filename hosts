@@ -1,1 +1,5 @@
-192.168.0.43 ansible_ssh_user=vagrant ansible_ssh_priviate_key_file=~/.ssh/id_rsa
+hosts:
+  docker:
+    ansible_host: 192.168.0.43 
+    ansible_ssh_user: vagrant 
+    ansible_ssh_priviate_key_file: '~/.ssh/id_rsa'

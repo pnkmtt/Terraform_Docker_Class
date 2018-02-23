@@ -1,8 +1,4 @@
-#/bin/bash
 #!/bin/bash
-#cho 'Running update'
-#udo apt update
-#cho ' Installing Docker'
-#udo apt install docker.io -y
-
-
+cp /vagrant/files/ssh/id_rsa* ~vagrant/.ssh
+chmod 644 ~vagrant/.ssh/id_rsa*
+cat ~vagrant/.ssh/id_rsa.pub >> ~vagrant/.ssh/authorized_keys
