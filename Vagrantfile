@@ -9,8 +9,8 @@
 domain   = 'example.com'
 
 nodes = [
-  { :hostname => 'terraform',   :ip => '192.168.0.42', :box => 'v0rtex/xenial64-iso', :guest => '22', :host => '5555', :guest2 => '80', :host2 => '8080'},
-  { :hostname => 'docker',   :ip => '192.168.0.43', :box => 'v0rtex/xenial64-iso', :guest => '22', :host => '5556', :guest2 => '80', :host2 => '8081'},
+  { :hostname => 'terraform',   :ip => '192.168.0.42', :box => 'v0rtex/xenial64-iso', :guest => '22', :host => '5555', :guest2 => '80', :host2 => '8090'},
+  { :hostname => 'docker',   :ip => '192.168.0.43', :box => 'v0rtex/xenial64-iso', :guest => '22', :host => '5556', :guest2 => '80', :host2 => '8091'},
 ]
 
 Vagrant.configure("2") do |config|
