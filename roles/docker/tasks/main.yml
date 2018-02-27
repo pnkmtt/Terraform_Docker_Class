@@ -17,7 +17,7 @@
 - name: add docker repositiory
   apt_repository: repo='deb https://download.docker.com/linux/ubuntu xenial stable' state=present
 
-- name: Update apt 2nd
+- name: Update apt 2nd to load new repositiory
   apt: update_cache=yes
 
 - name: install docker-ce
@@ -26,8 +26,5 @@
 - name: copy in updated docker.service file
   copy: src=docker.service dest=/lib/systemd/system/docker.service
 
-- name: reload systemd
-  shell: /bin/systemctl daemon-reload
-
-- name: reload docker
-  shell: /bin/systemctl restart docker.service
+- name: start docker and reload systemd
+  systemd: state=restarted daemon_reload=yes name=docker

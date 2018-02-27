@@ -1,3 +1,3 @@
 ---
 - name: 1. install terraform
-  copy src=terraform dest=/usr/sbin/terraform mode=0755
+  copy: src=terraform dest=/usr/sbin/terraform mode=0755
