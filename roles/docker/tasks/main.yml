@@ -17,7 +17,7 @@
 - name: add docker repositiory
   apt_repository: repo='deb https://download.docker.com/linux/ubuntu xenial stable' state=present
 
-- name: Update apt 2nd to load new repositiory
+- name: Update apt again to load new repositiory
   apt: update_cache=yes
 
 - name: install docker-ce

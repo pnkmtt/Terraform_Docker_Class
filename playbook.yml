@@ -2,3 +2,7 @@
 - hosts: docker
   roles:
   - role: docker
+
+- hosts: terraform
+  roles:
+  - role: terraform
