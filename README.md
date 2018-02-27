@@ -147,8 +147,8 @@ vagrant@terraform:~$
 
 Now that we have access we need to run the included playbook.  Run the following commands: 
 
-'cd /vagrant'
-'ansible-playbook -i /var/tmp/hosts playbook.yml'
+`cd /vagrant`
+`ansible-playbook -i /var/tmp/hosts playbook.yml`
 
 Answer yes to accept the ssh key
 
@@ -168,7 +168,7 @@ The terraform host will have v0.11.3 installed.
 
 To run Terraform run the blow commands:
 
-'cd /vagrant/files'
+`cd /vagrant/files`
 
 Within this directory is the docker_machine.tf file.  This contains the provider settings of the docker host and the definition of the conainters that we will estabish.
 
@@ -256,7 +256,7 @@ can't guarantee that exactly these actions will be performed if
 
 ```
 
-Now that we are happy with our configuration we can allow terraform to create the container run the command: 'terraform apply'
+Now that we are happy with our configuration we can allow terraform to create the container run the command: `terraform apply`
 
 ```
 $ terraform apply
@@ -335,7 +335,7 @@ docker_container.nginx-server: Creation complete after 2s (ID: db881288bce354936
 Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 ```
 
-From terraform we can see what it thinks the current state is and what it would do if we ran 'terraform apply' again.
+From terraform we can see what it thinks the current state is and what it would do if we ran `terraform apply` again.
 
 ```
 $ terraform plan
@@ -359,16 +359,12 @@ actions need to be performed.
 
 In order to see our container we can log into the docker host with putty 127.0.01:5556 u: vagrant p: vagrant.
 
-By running 'sudo docker stats' we can see the running container. I have truncated the below output.
+By running `sudo docker stats` we can see the running container. I have truncated the below output.
 
 ```
 CONTAINER ID        NAME                CPU %               MEM USAGE / 
 434771e057a2        nginx-server        0.00%               1.359MiB / 
 ```
-
-
-
-
 
 
 # Clean up your Vagrant install
