@@ -18,7 +18,8 @@ Vagrant.configure("2") do |config|
     config.vm.define node[:hostname] do |nodeconfig|
       nodeconfig.vm.box = node[:box]
       nodeconfig.vm.hostname = node[:hostname] + ".box"
-      nodeconfig.vm.network :private_network, ip: node[:ip]
+      # https://www.virtualbox.org/manual/ch06.html#network_internal
+      nodeconfig.vm.network :private_network, ip: node[:ip], virtualbox__intnet: true
       nodeconfig.vm.boot_timeout = 300
       nodeconfig.vm.network "forwarded_port", guest: node[:guest], host: node[:host]
       memory = node[:ram] ? node[:ram] : 500;
