@@ -1,4 +1,4 @@
-# Vagrant_Ansible_Class
+# Terraform_Docker_Class
 Basic class on Ansible using Vagrant and Virtualbox.
 
 ## Introduction
