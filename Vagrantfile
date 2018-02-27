@@ -9,8 +9,8 @@
 domain   = 'example.com'
 
 nodes = [
-  { :hostname => 'terraform',   :ip => '192.168.0.42', :box => 'v0rtex/xenial64-iso', :guest => '22', :host => '5555'},
-  { :hostname => 'docker',   :ip => '192.168.0.43', :box => 'v0rtex/xenial64-iso', :guest => '22', :host => '5556'},
+  { :hostname => 'terraform',   :ip => '192.168.0.42', :box => 'v0rtex/xenial64-iso', :guest => '22', :host => '5555', :guest2 => '80', :host2 => '8080'},
+  { :hostname => 'docker',   :ip => '192.168.0.43', :box => 'v0rtex/xenial64-iso', :guest => '22', :host => '5556', :guest2 => '80', :host2 => '8081'},
 ]
 
 Vagrant.configure("2") do |config|
@@ -22,6 +22,7 @@ Vagrant.configure("2") do |config|
       nodeconfig.vm.network :private_network, ip: node[:ip], virtualbox__intnet: true
       nodeconfig.vm.boot_timeout = 300
       nodeconfig.vm.network "forwarded_port", guest: node[:guest], host: node[:host]
+      nodeconfig.vm.network "forwarded_port", guest: node[:guest2], host: node[:host2]
       memory = node[:ram] ? node[:ram] : 500;
       nodeconfig.vm.provider :virtualbox do |vb|
         vb.linked_clone = true
