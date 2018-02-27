@@ -1,6 +1,6 @@
 ---
 - name: Update apt
-  apt: update_cache: yes
+  apt: update_cache=yes
 
 - name: Install software-properties-common tools
   apt: name=software-properties-common state=present
@@ -12,28 +12,22 @@
   copy: src=docker.gpg dest=/var/tmp/docker.gpg
 
 - name: add docker key to apt
-  apt_key: id: f273FCD8 file: /var/tmp/docker.gpg state:present
+  apt_key: id=f273FCD8 file=/var/tmp/docker.gpg state=present
 
 - name: add docker repositiory
-  apt_repository: repo: deb arch=amd64 https://download.docker.com/linux/ubuntu xenial stable
+  apt_repository: repo='deb https://download.docker.com/linux/ubuntu xenial stable' state=present
 
 - name: Update apt 2nd
-  apt: update_cache: yes
+  apt: update_cache=yes
 
 - name: install docker-ce
   apt: name=docker-ce state=present
 
 - name: copy in updated docker.service file
-  copy: src=docker.service dest=/lib/systemd/system 
+  copy: src=docker.service dest=/lib/systemd/system/docker.service
 
 - name: reload systemd
-  systemd: daemon_reload=yes
+  shell: /bin/systemctl daemon-reload
 
-- name: reload docker to open listener
-  systemd: name=docker state=restarted daemon_reload=yes
-
-
-
-
-
-
+- name: reload docker
+  shell: /bin/systemctl restart docker.service
