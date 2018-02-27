@@ -21,6 +21,7 @@ Vagrant.configure("2") do |config|
       # https://www.virtualbox.org/manual/ch06.html#network_internal
       nodeconfig.vm.network :private_network, ip: node[:ip], virtualbox__intnet: true
       nodeconfig.vm.boot_timeout = 300
+      # https://www.vagrantup.com/docs/networking/forwarded_ports.html
       nodeconfig.vm.network "forwarded_port", guest: node[:guest], host: node[:host]
       nodeconfig.vm.network "forwarded_port", guest: node[:guest2], host: node[:host2]
       memory = node[:ram] ? node[:ram] : 500;
