@@ -17,3 +17,6 @@ sudo apt install ansible -y
 echo 'Because I did this on windows we copy the inventory file to a directory and fix permissions - this is a hack'
 cp /vagrant/hosts /var/tmp/hosts
 chmod -x /var/tmp/hosts
+echo '-----------------------Configure ansible to ignore host_key_checking-------------------------'
+echo '[defaults]' > /etc/ansible/ansible.cfg
+echo 'host_key_checking = False' >> /etc/ansible/ansible.cfg
