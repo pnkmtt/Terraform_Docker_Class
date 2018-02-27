@@ -119,17 +119,7 @@ C:\Users\panik\Dropbox\git\Vagrant_Ansible_Class>Bringing machine 'default' up w
 
 Now that the instances is up, ssh into the VM via putty. The host information is 127.0.0.1 and the port is 2222; the user is 'vagrant'; and the password is 'vagrant'.
 
-## Installing Ansible on your new VM
-
-We now need to install Ansible on our new host. Run the following set of commands to install Ansible and its dependencies. In the interest of demonstrating these steps, I did not automate the install process with Vagrant.
-
-```
-sudo apt-add-repository ppa:ansible/ansible -y
-sudo apt-get update -y
-sudo apt-get install software-properties-common python-software-properties ansible -y
-```
-
-To make sure Ansible is installed run `ansible --version`
+Make sure Ansible is installed run `ansible --version`
 
 ```
 vagrant@myxenial64:/vagrant$ ansible --version
@@ -140,62 +130,246 @@ ansible 2.0.0.2
 
 We now have a working Ansible install.
 
-## Running our first Ansible playbook
+## Running the setup Ansible playbook to finish our lab enviroment
 
-Ansible uses ssh to access the hosts that it configures. Since we are doing this on the newly created VM, we will be ssh'ing to the localhost and configuring our applications.
-
-In order to this we need to take a step to generate an ssh key for the vagrant user and put it in the authorized_keys file. The below example shows the creation of an RSA ssh key and the population of the vagrant user authorized_keys file.
-
-As the vagrant user run `ssh-keygen -t rsa` and accept the defaults.  Once complete, copy the newly generated RSA public key into the vagrant user's authorized_keys file. Run the command `cat .ssh/id_rsa.pub > .ssh/authorized_keys`.  Note: this is not how you would manage the key files in production, but we are using sudo which is preferred over direct root access.
-
-To test the connection ssh to the localhost and you will not need a password `ssh localhost`.  Exit once you have confirmed access.
+Start by logging into our new Terraform host.  Open putty and ssh to 127.0.0.1:5555. u: vagrant p: vagrant
 
 ```
-vagrant@myxenial64:~$ ssh-keygen -t rsa
-Generating public/private rsa key pair.
-Enter file in which to save the key (/home/vagrant/.ssh/id_rsa):
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-Your identification has been saved in /home/vagrant/.ssh/id_rsa.
-Your public key has been saved in /home/vagrant/.ssh/id_rsa.pub.
-The key fingerprint is:
-SHA256:XiBndxIcOQxuaBzyhJoNbi6Bbb7UdD9bBHnMec7FNiQ vagrant@myxenial64
-The key's randomart image is:
-+---[RSA 2048]----+
-|    ..o .Bo+Eo.  |
-|  . .= +o X...=  |
-|.o =  * *oo=.o . |
-|o B o..= o.oo    |
-| * o . .S..      |
-|. + .  .o..      |
-| o .    .+       |
-|  .     .        |
-|                 |
-+----[SHA256]-----+
-vagrant@myxenial64:~$ cat .ssh/id_rsa.pub > .ssh/authorized_keys
-vagrant@myxenial64:~$ ssh localhost
-The authenticity of host 'localhost (::1)' can't be established.
-ECDSA key fingerprint is SHA256:7AfUe0N0zVc8EFUtFyzW7f9NlVztFFAdXg9T37N4L8c.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added 'localhost' (ECDSA) to the list of known hosts.
+login as: vagrant
+vagrant@127.0.0.1's password:
 Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.4.0-112-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com
  * Management:     https://landscape.canonical.com
  * Support:        https://ubuntu.com/advantage
-Last login: Fri Feb  9 18:26:40 2018 from 10.0.2.2
-vagrant@myxenial64:~$ exit
-logout
-Connection to localhost closed.
+vagrant@terraform:~$
 ```
 
-# Machine notes
+Now that we have access we need to run the included playbook.  Run the following commands: 
 
-## Terraform host
+'cd /vagrant'
+'ansible-playbook -i /var/tmp/hosts playbook.yml'
 
-As of this writing I am installing terraform 0.11.3 from the link below.  This is the latest release at this time.
+Answer yes to accept the ssh key
 
-https://releases.hashicorp.com/terraform/0.11.3/
+```
+The authenticity of host '192.168.0.43 (192.168.0.43)' can't be established.
+ECDSA key fingerprint is SHA256:7AfUe0N0zVc8EFUtFyzW7f9NlVztFFAdXg9T37N4L8c.
+Are you sure you want to continue connecting (yes/no)? yes
+```
+
+You will see output as ansible sets up a docker host and installs terraform on the local machine.
+
+During this process the packages on the docker host will be updated, the current ansible repository added, and finally the docker service will be installed.  We will also configure the docker service to listen on port 2375.
+
+The terraform host will have v0.11.3 installed.
+
+## Using Terraform to create a docker container
+
+To run Terraform run the blow commands:
+
+'cd /vagrant/files'
+
+Within this directory is the docker_machine.tf file.  This contains the provider settings of the docker host and the definition of the conainters that we will estabish.
+
+To use terraform we must first do a 'terraform init', this downloads the correct libraties to enable terraform to manage docker.
+
+```
+$ terraform init
+
+Initializing provider plugins...
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, it is recommended to add version = "..." constraints to the
+corresponding provider blocks in configuration, with the constraint strings
+suggested below.
+
+* provider.docker: version = "~> 0.1"
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+```
+
+Now that terraform is ready to talk to docker we can run 'terraform plan' to see what it thinks it should be creating based on our configuration file. In our case we are creating a single container based on the latest ubuntu image.
+
+```
+$ terraform plan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  + docker_container.nginx-server
+      id:                               <computed>
+      bridge:                           <computed>
+      gateway:                          <computed>
+      image:                            "${docker_image.nginx.latest}"
+      ip_address:                       <computed>
+      ip_prefix_length:                 <computed>
+      log_driver:                       "json-file"
+      must_run:                         "true"
+      name:                             "nginx-server"
+      ports.#:                          "1"
+      ports.985670353.external:         ""
+      ports.985670353.internal:         "80"
+      ports.985670353.ip:               ""
+      ports.985670353.protocol:         "tcp"
+      restart:                          "no"
+      volumes.#:                        "1"
+      volumes.187550123.container_path: "/usr/share/nginx/html"
+      volumes.187550123.from_container: ""
+      volumes.187550123.host_path:      "/vagrant/files"
+      volumes.187550123.read_only:      "true"
+      volumes.187550123.volume_name:    ""
+
+  + docker_image.nginx
+      id:                               <computed>
+      latest:                           <computed>
+      name:                             "nginx:1.11-alpine"
+
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
+
+```
+
+Now that we are happy with our configuration we can allow terraform to create the container run the command: 'terraform apply'
+
+```
+$ terraform apply
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  + docker_container.nginx-server
+      id:                               <computed>
+      bridge:                           <computed>
+      gateway:                          <computed>
+      image:                            "${docker_image.nginx.latest}"
+      ip_address:                       <computed>
+      ip_prefix_length:                 <computed>
+      log_driver:                       "json-file"
+      must_run:                         "true"
+      name:                             "nginx-server"
+      ports.#:                          "1"
+      ports.985670353.external:         ""
+      ports.985670353.internal:         "80"
+      ports.985670353.ip:               ""
+      ports.985670353.protocol:         "tcp"
+      restart:                          "no"
+      volumes.#:                        "1"
+      volumes.187550123.container_path: "/usr/share/nginx/html"
+      volumes.187550123.from_container: ""
+      volumes.187550123.host_path:      "/vagrant/files"
+      volumes.187550123.read_only:      "true"
+      volumes.187550123.volume_name:    ""
+
+  + docker_image.nginx
+      id:                               <computed>
+      latest:                           <computed>
+      name:                             "nginx:1.11-alpine"
+
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+docker_image.nginx: Creating...
+  latest: "" => "<computed>"
+  name:   "" => "nginx:1.11-alpine"
+docker_image.nginx: Still creating... (10s elapsed)
+docker_image.nginx: Creation complete after 19s (ID: sha256:bedece1f06cc142829698e6ba8f04d7f...85e14b65f55e6ae4858c2nginx:1.11-alpine)
+docker_container.nginx-server: Creating...
+  bridge:                           "" => "<computed>"
+  gateway:                          "" => "<computed>"
+  image:                            "" => "sha256:bedece1f06cc142829698e6ba8f04d7f92e7f1b94b985e14b65f55e6ae4858c2"
+  ip_address:                       "" => "<computed>"
+  ip_prefix_length:                 "" => "<computed>"
+  log_driver:                       "" => "json-file"
+  must_run:                         "" => "true"
+  name:                             "" => "nginx-server"
+  ports.#:                          "" => "1"
+  ports.985670353.external:         "" => ""
+  ports.985670353.internal:         "" => "80"
+  ports.985670353.ip:               "" => ""
+  ports.985670353.protocol:         "" => "tcp"
+  restart:                          "" => "no"
+  volumes.#:                        "" => "1"
+  volumes.187550123.container_path: "" => "/usr/share/nginx/html"
+  volumes.187550123.from_container: "" => ""
+  volumes.187550123.host_path:      "" => "/vagrant/files"
+  volumes.187550123.read_only:      "" => "true"
+  volumes.187550123.volume_name:    "" => ""
+docker_container.nginx-server: Creation complete after 2s (ID: db881288bce354936145ccc8e5dfba619b281b860193b71e4dddfb21265b6157)
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+```
+
+From terraform we can see what it thinks the current state is and what it would do if we ran 'terraform apply' again.
+
+```
+$ terraform plan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+docker_image.nginx: Refreshing state... (ID: sha256:bedece1f06cc142829698e6ba8f04d7f...85e14b65f55e6ae4858c2nginx:1.11-alpine)
+docker_container.nginx-server: Refreshing state... (ID: db881288bce354936145ccc8e5dfba619b281b860193b71e4dddfb21265b6157)
+
+------------------------------------------------------------------------
+
+No changes. Infrastructure is up-to-date.
+
+This means that Terraform did not detect any differences between your
+configuration and real physical resources that exist. As a result, no
+actions need to be performed.
+
+```
+
+
+In order to see our container we can log into the docker host with putty 127.0.01:5556 u: vagrant p: vagrant.
+
+By running 'sudo docker stats' we can see the running container. I have truncated the below output.
+
+```
+CONTAINER ID        NAME                CPU %               MEM USAGE / 
+434771e057a2        nginx-server        0.00%               1.359MiB / 
+```
+
+
+
+
+
 
 # Clean up your Vagrant install
 
