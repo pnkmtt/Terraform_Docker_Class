@@ -1,5 +1,5 @@
 # Terraform_Docker_Class
-Basic class on Ansible using Vagrant and Virtualbox.
+Basic class on Ansible using Terraform and Docker.
 
 ## Introduction
 
@@ -54,11 +54,11 @@ Now that we have everything installed we need to download the required Vagrant f
 
 ### Download the class material via git
 
-From a new or existing directory (i.e. `C:\Users\Panik\Downloads`) on the command line, run this command: `git clone https://github.com/pnkmtt/Vagrant_Ansible_Class`
+From a new or existing directory (i.e. `C:\Users\Panik\Downloads`) on the command line, run this command: `git clone https://github.com/pnkmtt/Terraform_Docker_Class`
 
-This will download the Vagrant file and allow us to create your new VirtualBox VM in a directory called Vagrant_Ansible_Class.
+This will download the Vagrant file and allow us to create your new VirtualBox VM in a directory called Terraform_Docker_Class.
 
-Once the clone has completed, `cd` to the target directory, For example `cd C:\User\panik\Downloads\Vagrant_Ansible_Class`
+Once the clone has completed, `cd` to the target directory, For example `cd C:\User\panik\Downloads\Terraform_Docker_Class`
 
 We will now create our VM based on the downloaded files, run the command `vagrant up`. The output should be similar to the example below.
 
