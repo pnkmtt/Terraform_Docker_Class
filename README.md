@@ -166,7 +166,7 @@ The terraform host will have v0.11.3 installed.
 
 ## Using Terraform to create a docker container
 
-To run Terraform run the blow commands:
+To run Terraform run the below commands on the same box:
 
 `cd /vagrant/files`
 
@@ -366,12 +366,30 @@ CONTAINER ID        NAME                CPU %               MEM USAGE /
 434771e057a2        nginx-server        0.00%               1.359MiB / 
 ```
 
+Other ways to look at your container:
+
+```
+$ sudo docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                            NAMES
+8209b8eb75be        bedece1f06cc        "nginx -g 'daemon of…"   3 minutes ago       Up 3 minutes        443/tcp, 0.0.0.0:32768->80/tcp   nginx-server
+```
+
+How to look at any port mappings:
+
+```
+$ sudo docker port 8209b8eb75be
+80/tcp -> 0.0.0.0:32768
+
+```
+
+This maps to the Vagrantfile in the /vagrant directory where we map a port to the container port so you can access nginx.  To test point your browser to http://127.0.0.1:8091.
+
 
 # Clean up your Vagrant install
 
 When you are ready to finish the exercise you should remove your VM.
 
-In order to do this run the follow command from the original directory `vagrant destroy`. You will have to answer `y` to complete the destruction.
+In order to do this run the follow command from the original directory and command line prompt `vagrant destroy`. You will have to answer `y` to complete the destruction.
 
 ```
 C:\Users\panik\Dropbox\git\Vagrant_Ansible_Class>vagrant destroy
